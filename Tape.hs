@@ -23,12 +23,13 @@ empty = 0
 -- data Symbols    = Zero  | One | Empty  deriving (Show)
 -- empty = Empty   
 
-
 type Tape a     = ( [a] , [a] )
-
 
 initT       :: Tape Symbols
 initT      = ([],[empty])
+
+-------------------------
+------State Monad--------
 
 -- Estados
 type Env = Tape Symbols
@@ -53,11 +54,25 @@ instance Applicative State where
     pure   = return
     (<*>)  = ap
 
+-- Clase para representar mónadas con estado de variables
+class Monad m => MonadState m where
+    right ::               m ()
+    left  ::               m ()
+    write ::  Symbols ->   m ()
+    read  ::               m Symbols
 
+-- Accesos la cinta solo con las maquinas elementales
+instance MonadState State where
+    right   = State(\s -> (()       ,rightT    s)  )
+    left    = State(\s -> (()       ,leftT     s)  )
+    write w = State(\s -> (()       ,writeT  w s)  )
+    read    = State(\s -> ((readT s),  s        )  )
 
------ BASIC MACHINES -----
-
-
+-- -- Evalua un programa en el estado nulo
+-- eval :: Comm -> Env
+-- eval p = snd (runState (evalComm p) initState)
+------------------------------
+----- ELEMENTAL MACHINES -----
 
 rightT      ::  Tape Symbols -> Tape Symbols
 rightT t    = let (ys,xs) = t 
@@ -85,15 +100,82 @@ writeT w t  = let (ys,xs) = t
 
 ----------------------------
 
------ Advance Machines -----
+----- Advance Machines ----- 
 
--- rightUntil:: Symbols -> Tape Symbols -> Tape Symbols
+rightUntil      :: MonadState m => Symbols -> m()
+rightUntil s    =   do  i <- Tape.read
+                        if i == s 
+                            then return ()  
+                            else do right
+                                    rightUntil s
+                            -- else right >>= (rightUntil s)
+
+leftUntil      :: MonadState m => Symbols -> m()
+leftUntil s    =    do  i <- Tape.read
+                        if i == s 
+                            then return ()  
+                            else do left
+                                    leftUntil s
+                            -- else right >>= (rightUntil s)
+-- leftUntil       :: MonadState m => Symbols -> m()
+--Mas que Expresion, puede ser que Secuencia del lectura se ajuste mejor a lo que hace
+rightUntilExpr      :: MonadState m => [Symbols] -> m()
+rightUntilExpr []       = return ()
+rightUntilExpr xs   = do    i <- Tape.read
+                            if i == head xs 
+                             then do    b <- checkExprRight xs
+                                        if b
+                                            then return ()
+                                            else do right
+                                                    rightUntilExpr xs 
+                             else do    right
+                                        rightUntilExpr xs
+
+checkExprRight :: MonadState m => [Symbols] -> m Bool
+checkExprRight []       = do    left
+                                return True
+checkExprRight (x:xs)   = do    i <- Tape.read
+                                if( i == x )
+                                    then do right
+                                            b <- checkExprRight xs
+                                            if b
+                                                then return b 
+                                                else do left 
+                                                        return b
+                                    else return False
+
+leftUntilExpr      :: MonadState m => [Symbols] -> m()
+leftUntilExpr []   = return ()
+leftUntilExpr xs   = do    i <- Tape.read
+                           if i == head xs 
+                             then do    b <- checkExprLeft xs
+                                        if b
+                                            then return ()
+                                            else do left
+                                                    leftUntilExpr xs 
+                             else do    left
+                                        leftUntilExpr xs
+
+checkExprLeft :: MonadState m => [Symbols] -> m Bool
+checkExprLeft []       = do    right
+                               return True
+checkExprLeft (x:xs)   = do    i <- Tape.read
+                               if( i == x )
+                                    then do left
+                                            b <- checkExprLeft xs
+                                            if b
+                                                then return b 
+                                                else do right 
+                                                        return b
+                                    else return False
 
 
+-- ([],[1,2,3,4,5])
+del1al5 = writeT 1 $ leftT $ writeT 2 $ leftT $ writeT 3 $ leftT $ writeT 4 $ leftT $ writeT 5 $ initState
 
 
-
-
+-- eval :: MonadState m => m() ->  Env
+eval f initS =  runState ( f ) initS
                     
 -- t = initT 0
 -- a = rightT 0 $ rightT 0 $ rightT 0 $ leftT 0 $ leftT 0 $ leftT 0 $ leftT 0 $ leftT 0 $t
