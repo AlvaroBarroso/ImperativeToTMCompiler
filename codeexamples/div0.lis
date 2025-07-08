@@ -1,0 +1,17 @@
+let base = 2;
+let exp = 4;
+let boolThenInt = 10000;
+while (exp - 1 != 0){
+	if (exp > 0) skip else skip;
+	base = base * base;
+	exp = exp -1;
+	let a = 10000
+};
+if asd {
+	let a - 0;
+}
+a = 2;
+let a = 2;
+let b = a == 3;
+let aa = true;
+boolThenInt = true

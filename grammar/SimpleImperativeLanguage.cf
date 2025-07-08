@@ -1,0 +1,37 @@
+-- Arithmetic expressions
+Exp.    IntExp ::= Integer ;
+VarInt.    IntExp ::= Ident ;
+UMinus. IntExp ::= "-" IntExp ;
+Plus.   IntExp ::= IntExp "+" IntExp ;
+Minus.  IntExp ::= IntExp "-" IntExp ;
+Times.  IntExp ::= IntExp "*" IntExp ;
+Div.    IntExp ::= IntExp "/" IntExp ;
+
+-- Boolean expressions
+BTrue.  BoolExp ::= "true" ;
+BFalse. BoolExp ::= "false" ;
+Eq.     BoolExp ::= IntExp "==" IntExp ;
+NEq.    BoolExp ::= IntExp "!=" IntExp ;
+Lt.     BoolExp ::= IntExp "<" IntExp ;
+Gt.     BoolExp ::= IntExp ">" IntExp ;
+And.    BoolExp ::= BoolExp "&&" BoolExp ;
+Or.     BoolExp ::= BoolExp "||" BoolExp ;
+Not.    BoolExp ::= "!" BoolExp ;
+VarBool. BoolExp ::= Ident ;  -- Allow variables to be used as boolean expressions
+
+-- Commands (statements)
+Skip.       Comm ::= "skip" ;
+LetInt.     Comm ::= "let" Ident "=" IntExp ;
+LetBool.    Comm ::= "let" Ident "=" BoolExp ;
+AssInt.     Comm ::= Ident "=" IntExp ;
+AssBool.    Comm ::= Ident "=" BoolExp ;
+Seq.        Comm ::= Comm ";" Comm ;
+IfThenElse. Comm ::= "if" "(" BoolExp ")" Comm "else" Comm ;
+While.      Comm ::= "while" "(" BoolExp ")" "{" Comm "}" ;
+
+-- Comments
+comment "//" ;
+comment "/*" "*/" ;
+
+-- Entry points
+entrypoints Comm ;

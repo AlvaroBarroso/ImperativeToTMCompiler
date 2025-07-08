@@ -1,0 +1,87 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.37.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           ImperativeToTMCompiler
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/ImperativeToTMCompiler#readme>
+homepage:       https://github.com/github.com/AlvaroBarroso#readme
+bug-reports:    https://github.com/github.com/AlvaroBarroso/issues
+author:         Alvaro Barroso
+maintainer:     alva15151515@gmail.com
+copyright:      2024 Alvaro Barroso
+license:        BSD-3-Clause
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/github.com/AlvaroBarroso
+  subdir: ImperativeToTMCompiler
+
+library
+  exposed-modules:
+      AST
+      BinaryTuringMachines
+      Semantic.Checker
+      SimpleImperativeLanguage.Abs
+      SimpleImperativeLanguage.ErrM
+      SimpleImperativeLanguage.Lex
+      SimpleImperativeLanguage.Par
+      SimpleImperativeLanguage.Print
+      SimpleImperativeLanguage.Skel
+      Tape
+  other-modules:
+      Paths_ImperativeToTMCompiler
+  autogen-modules:
+      Paths_ImperativeToTMCompiler
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      array
+    , base >=4.7 && <5
+    , containers
+  default-language: Haskell2010
+
+executable ImperativeToTMCompiler-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_ImperativeToTMCompiler
+  autogen-modules:
+      Paths_ImperativeToTMCompiler
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-tools:
+      alex >=3.4.0.1
+    , happy >=1.20.1.1
+  build-tool-depends:
+      BNFC:BNFC >=2.9.5
+  build-depends:
+      ImperativeToTMCompiler
+    , array
+    , base >=4.7 && <5
+    , containers
+  default-language: Haskell2010
+
+test-suite ImperativeToTMCompiler-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_ImperativeToTMCompiler
+  autogen-modules:
+      Paths_ImperativeToTMCompiler
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      ImperativeToTMCompiler
+    , array
+    , base >=4.7 && <5
+    , containers
+  default-language: Haskell2010
